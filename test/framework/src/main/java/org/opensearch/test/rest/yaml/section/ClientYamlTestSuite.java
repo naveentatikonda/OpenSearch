@@ -33,10 +33,8 @@ package org.opensearch.test.rest.yaml.section;
 
 import org.opensearch.client.NodeSelector;
 import org.opensearch.common.ParsingException;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.NamedXContentRegistry;
-import org.opensearch.common.xcontent.XContentParseException;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.*;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.common.xcontent.yaml.YamlXContent;
 
 import java.io.IOException;
@@ -45,12 +43,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -85,6 +78,32 @@ public class ClientYamlTestSuite {
 
         try (XContentParser parser = YamlXContent.yamlXContent.createParser(executeableSectionRegistry,
             LoggingDeprecationHandler.INSTANCE, Files.newInputStream(file))) {
+
+            //Debugging Logic
+         /*   String currentFieldName = null;
+            XContentParser.Token token;
+            DoSection doSection = new DoSection(parser.getTokenLocation());
+            ApiCallSection apiCallSection = null;
+            NodeSelector nodeSelector = NodeSelector.ANY;
+            Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            List<String> expectedWarnings = new ArrayList<>();
+            List<String> allowedWarnings = new ArrayList<>();
+
+            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+                System.out.println("Inside while loop");
+                if (token == XContentParser.Token.FIELD_NAME) {
+                    currentFieldName = parser.currentName();
+                    System.out.println(currentFieldName);
+                }  else if (token == XContentParser.Token.START_OBJECT) {
+                   if (currentFieldName != null) { // must be part of API call then
+                        apiCallSection = new ApiCallSection(currentFieldName);
+                        System.out.println("Inside apicallsection");
+                        System.out.println(apiCallSection.getApi());
+
+                    }
+                }
+            }*/
+
             return parse(api, filename, parser);
         } catch(Exception e) {
             throw new IOException("Error parsing " + api + "/" + filename, e);

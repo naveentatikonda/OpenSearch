@@ -120,8 +120,11 @@ public class DoSection implements ExecutableSection {
         }
 
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+              System.out.println("Inside while loop");
+              System.out.println(token);
             if (token == XContentParser.Token.FIELD_NAME) {
                 currentFieldName = parser.currentName();
+                System.out.println(currentFieldName);
             } else if (token.isValue()) {
                 if ("catch".equals(currentFieldName)) {
                     doSection.setCatch(parser.text());
@@ -170,6 +173,9 @@ public class DoSection implements ExecutableSection {
                     }
                 } else if (currentFieldName != null) { // must be part of API call then
                     apiCallSection = new ApiCallSection(currentFieldName);
+                    System.out.println("Inside apicallsection");
+                    System.out.println(apiCallSection.getApi());
+
                     String paramName = null;
                     while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                         if (token == XContentParser.Token.FIELD_NAME) {
