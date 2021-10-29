@@ -113,6 +113,13 @@ public class DoSection implements ExecutableSection {
         Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         List<String> expectedWarnings = new ArrayList<>();
         List<String> allowedWarnings = new ArrayList<>();
+        while((token = parser.nextToken()) != null) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                currentFieldName = parser.currentName();
+                System.out.println(currentFieldName);
+            }
+            else System.out.println(token);
+        }
 
         if (parser.nextToken() != XContentParser.Token.START_OBJECT) {
             throw new IllegalArgumentException("expected [" + XContentParser.Token.START_OBJECT + "], " +
@@ -120,8 +127,11 @@ public class DoSection implements ExecutableSection {
         }
 
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            System.out.println("Inside while loop");
             if (token == XContentParser.Token.FIELD_NAME) {
                 currentFieldName = parser.currentName();
+
+
             } else if (token.isValue()) {
                 if ("catch".equals(currentFieldName)) {
                     doSection.setCatch(parser.text());
@@ -170,6 +180,9 @@ public class DoSection implements ExecutableSection {
                     }
                 } else if (currentFieldName != null) { // must be part of API call then
                     apiCallSection = new ApiCallSection(currentFieldName);
+                    System.out.println("Printing currentFieldName");
+                    System.out.println(currentFieldName);
+                    System.out.println(apiCallSection.getApi());
                     String paramName = null;
                     while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                         if (token == XContentParser.Token.FIELD_NAME) {
